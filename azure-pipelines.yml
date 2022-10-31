@@ -1,0 +1,24 @@
+# Starter pipeline
+# Start with a minimal pipeline that you can customize to build and deploy your code.
+# Add steps that build, run tests, deploy, and more:
+# https://aka.ms/yaml
+
+trigger:
+- master
+
+pool:
+  vmImage: ubuntu-latest
+
+steps:
+- script: echo Hello, world!
+  displayName: 'Run a one-line script'
+- task: UsePythonVersion@0
+  inputs:
+    versionSpec: '3.8'
+  displayName: 'Install Python 3.8'
+- script: pip install checkov
+  displayName: 'Install Checkov'
+- script: checkov -d <directory> --bc-api-key ca755c08-3793-4e4d-b64f-07c1894fdd1f::DEHjxN8/f4Vf+GUz4fA2gZ2KKp4= --repo-id <org/repo> --branch <branch>
+  displayName: 'Scan with Prisma Cloud'
+  env:
+    PRISMA_API_URL: https://api.prismacloud.io
