@@ -4,21 +4,40 @@
 # https://aka.ms/yaml
 
 trigger:
-- master
+- main
+
+pr:
+- main
 
 pool:
   vmImage: ubuntu-latest
 
-steps:
-- script: echo Hello, world!
-  displayName: 'Run a one-line script'
-- task: UsePythonVersion@0
-  inputs:
-    versionSpec: '3.8'
-  displayName: 'Install Python 3.8'
-- script: pip install checkov
-  displayName: 'Install Checkov'
-- script: checkov -d <directory> --bc-api-key ca755c08-3793-4e4d-b64f-07c1894fdd1f::DEHjxN8/f4Vf+GUz4fA2gZ2KKp4= --repo-id <org/repo> --branch <branch>
-  displayName: 'Scan with Prisma Cloud'
-  env:
-    PRISMA_API_URL: https://api.prismacloud.io
+variables:
+  PRISMA_API_URL: https://api.prismacloud.io
+
+jobs:
+- job: Prisma_Cloud_Job
+  displayName: Prisma Cloud Job
+  steps:
+  - task: AzureKeyVault@2
+    inputs:
+      azureSubscription: 'pipeline-connection'
+      keyVaultName: 'pipeline-vault'
+      secretsFilter: '*'
+      runAsPreJob: false
+  - task: UsePythonVersion@0
+    inputs:
+      versionSpec: 3.8
+    displayName: 'Use Python 3.8'
+  - script: pip install checkov
+    displayName: Install Checkov
+  - script: checkov -d . --use-enforcement-rules --bc-api-key ca755c08-3793-4e4d-b64f-07c1894fdd1f::DEHjxN8/f4Vf+GUz4fA2gZ2KKp4= --repo-id donwukwe/terragoat --branch main -o cli -o junitxml --output-file-path console,CheckovReport.xml
+    workingDirectory: $(System.DefaultWorkingDirectory)
+    displayName: Run Checkov
+  - task: PublishTestResults@2
+    inputs:
+      testResultsFormat: 'JUnit'
+      testResultsFiles: '**/CheckovReport.xml'
+      testRunTitle: PrismaCloudTests
+    displayName: Publish Test Results
+    condition: always()
