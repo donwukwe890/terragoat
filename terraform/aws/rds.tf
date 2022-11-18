@@ -20,6 +20,7 @@ resource "aws_rds_cluster" "app4-rds-cluster" {
   cluster_identifier = "app4-rds-cluster"
   allocated_storage       = 10
   backup_retention_period = 15
+  storage_encrypted = true
 }
 
 resource "aws_rds_cluster" "app5-rds-cluster" {
@@ -32,6 +33,7 @@ resource "aws_rds_cluster" "app6-rds-cluster" {
   cluster_identifier = "app6-rds-cluster"
   allocated_storage       = 10
   backup_retention_period = 15
+  iam_database_authentication_enabled = true
 }
 
 resource "aws_rds_cluster" "app7-rds-cluster" {
@@ -44,6 +46,7 @@ resource "aws_rds_cluster" "app8-rds-cluster" {
   cluster_identifier = "app8-rds-cluster"
   allocated_storage       = 10
   backup_retention_period = 25
+  storage_encrypted = true
 }
 
 resource "aws_rds_cluster" "app9-rds-cluster" {
