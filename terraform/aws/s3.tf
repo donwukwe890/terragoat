@@ -4,7 +4,7 @@ resource "aws_s3_bucket" "data" {
   # bucket does not have access logs
   # bucket does not have versioning
   bucket        = "${local.resource_prefix.value}-data"
-  acl           = "public-read"
+  acl           = "private"
   force_destroy = true
   tags = {
     Name                 = "${local.resource_prefix.value}-data"
@@ -19,7 +19,7 @@ resource "aws_s3_bucket" "data" {
     yor_trace            = "fc8c2d7a-1997-4fc2-95c1-277cba5c2a38"
   }
   versioning {
-    enabled = "${var.versioning_enabled}"
+    enabled = true}"
   }
 }
 
